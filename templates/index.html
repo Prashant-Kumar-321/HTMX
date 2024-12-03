@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<div class="flex flex-col items-center gap-4">
+        <h1>HTMX Tutorial</h1>
+        <button
+            class="bg-sky-600 px-3 py-2 rounded-lg "
+            hx-get="{%url 'users-info'%}"
+            hx-trigger='click'
+            hx-swap="delete"
+            hx-target="#target"
+        >
+        Click Me
+        </button>
+        <div id="target"> 
+            <div class="first-child">First Child</div>
+            <div class="second-child">Second Child</div>
+        </div>
+   </div>
+
+{% endblock %}
