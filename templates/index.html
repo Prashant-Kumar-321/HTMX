@@ -1,22 +1,105 @@
 {% extends "layout.html" %}
+{% load static %}
 
 {% block body %}
-
 <div class="flex flex-col items-center gap-4">
         <h1>HTMX Tutorial</h1>
         <button
-            class="bg-sky-600 px-3 py-2 rounded-lg "
+            class="bg-sky-600 px-3 py-2 rounded-lg"
             hx-get="{%url 'users-info'%}"
             hx-trigger='click'
-            hx-swap="delete"
+            hx-swap="innerHTML"
+            {% comment %} hx-confirm="Are you really want to fetch users?" {% endcomment %}
             hx-target="#target"
         >
-        Click Me
+        Fetch Users
         </button>
-        <div id="target"> 
-            <div class="first-child">First Child</div>
-            <div class="second-child">Second Child</div>
+
+        <button
+            id='btn2'
+            class="bg-neutral-500 px-4 py-2 rounded-lg"
+            hx-get="{%url 'users-info'%}"
+            hx-target="#target"
+            hx-swap="innerHTML" 
+            {% comment %} hx-on:before-request="alert('Making a request')" {% endcomment %}
+        > Fetch User 2
+            <img class="htmx-indicator" src="{%static 'images/oval.svg' %}">
+        </button>
+
+        <div id="target">
+            
         </div>
+
+        <div id="custom-confirm-modal" 
+            class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden justify-center items-center">
+            <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+                <h2 class="text-xl font-semibold mb-4">Confirm Action</h2>
+                <p class="mb-6">Are you sure you want to fetch users?</p>
+                <button id="confirm" class="bg-green-500 text-white px-4 py-2 rounded-lg mr-4">Yes</button>
+                <button id="deny" class="bg-red-500 text-white px-4 py-2 rounded-lg">No</button>
+            </div>
+        </div>
+
+        <script>
+            //Event Triggers every time after htmx issue request 
+            {% comment %} document.addEventListener('htmx:afterRequest', (event)=>{
+                if (event.target.id === 'btn2'){
+                    alert("HTMX Request was made by btn2"); 
+                }else{
+                    alert('HTMX Request was made by btn1'); 
+                }
+            });  
+
+            window.callme = function () {
+                alert("I was called before making a htmx request"); 
+            } {% endcomment %}
+
+
+            // select button one 
+            const btn2 = document.querySelector('#btn2');
+            const confirm = document.querySelector('#confirm'); 
+            const deny = document.querySelector('#deny');  
+            const confirmation = document.querySelector('#custom-confirm-modal'); 
+            let user_confirmed = false; 
+
+            btn2.addEventListener('htmx:beforeRequest', event => {
+                if (user_confirmed){
+                    user_confirmed = false; 
+                    return; 
+                } 
+
+                // Cancel the request temporarily 
+                event.preventDefault(); 
+
+                // Show the confirmation menus 
+                showConfirmation(true); 
+
+                // confirm to make request 
+                confirm.onclick = (event) => {
+                    showConfirmation(false); 
+                    if (!user_confirmed){
+                        user_confirmed = true; 
+                        htmx.trigger(btn2, 'click'); 
+                    }
+                }
+
+                // Cancel Request
+                deny.onclick = () => {
+                    showConfirmation(false); 
+                };
+            }); 
+
+            function showConfirmation(show){
+                if (show){
+                    confirmation.classList.add("flex");
+                    confirmation.classList.remove("hidden");
+                }else{
+                    confirmation.classList.add("hidden");
+                    confirmation.classList.remove("flex"); 
+                }
+            }
+
+        </script>
    </div>
 
 {% endblock %}

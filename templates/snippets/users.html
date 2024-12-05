@@ -1,0 +1,9 @@
+<div>
+    <p>Counter: {{counter}} </p>
+    <h2 class="font-bold text-xl text-orange-600">Users Catalog</h2>
+    <ul class="flex flex-col justify-center">
+        {% for user in users %}
+            <li >{{user.name}}</li>
+        {% endfor %}
+    </ul>
+</div>

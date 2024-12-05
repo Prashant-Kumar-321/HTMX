@@ -10,6 +10,18 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <title>HTMX TUTORIAL LEARNING and EXPERIEMENT</title>
+    <style>
+        .htmx-indicator{
+            display:none;
+        }
+        .htmx-request .htmx-indicator{
+            display:inline;
+        }
+        .htmx-request.htmx-indicator{
+            display:inline;
+        }
+    </style>
+
 </head>
 <body>
     {% block body %}
